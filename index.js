@@ -1,17 +1,36 @@
-const express = require("express");
-const app = express();
-const port = process.env.PORT || 3000;
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+const { extrairTextoDoPDF } = require("./services/ocr");
 
-// Teste simples para garantir que o servidor está rodando
-app.get("/", (req, res) => {
-  res.send("✅ Pipefy Smart Bot Online");
+// Configuração do multer para salvar arquivos na pasta uploads/
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (req, file, cb) => {
+    const nome = Date.now() + "-" + file.originalname;
+    cb(null, nome);
+  }
 });
+const upload = multer({ storage });
 
-// Keep-alive para evitar SIGTERM no Railway
-setInterval(() => {
-  console.log("⏳ Keep-alive executado para manter o servidor online");
-}, 1000 * 60 * 5); // a cada 5 minutos
+// Garante que a pasta uploads existe
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+}
 
-app.listen(port, () => {
-  console.log(`🚀 Rodando na porta ${port}`);
+// Nova rota /clientes com upload + OCR
+app.post("/clientes", upload.single("arquivo"), async (req, res) => {
+  try {
+    const arquivo = req.file;
+    if (!arquivo) return res.status(400).send("Nenhum arquivo enviado.");
+
+    console.log("📎 Arquivo recebido:", arquivo.originalname);
+
+    const texto = await extrairTextoDoPDF(arquivo.path);
+    res.send(`<pre>${texto}</pre>`);
+
+  } catch (err) {
+    console.error("❌ Erro ao processar OCR:", err);
+    res.status(500).send("Erro interno ao processar o arquivo.");
+  }
 });
