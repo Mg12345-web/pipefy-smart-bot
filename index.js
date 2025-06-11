@@ -65,7 +65,10 @@ app.listen(port, () => {
   console.log(`🚀 Rodando na porta ${port}`);
 });
 
-// 🚨 Adicione isto para manter o container ativo:
+// Garante que o app fique ativo (evita encerramento automático no Railway)
 setInterval(() => {
   console.log("⏳ Keep-alive executado");
 }, 1000 * 60 * 5); // a cada 5 minutos
+
+// Impede a aplicação de finalizar
+process.stdin.resume();
