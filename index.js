@@ -60,15 +60,14 @@ app.post("/clientes", upload.fields([
   }
 });
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`🚀 Rodando na porta ${port}`);
 });
 
-// Garante que o app fique ativo (evita encerramento automático no Railway)
+// Impede o Railway de derrubar a instância
 setInterval(() => {
   console.log("⏳ Keep-alive executado");
-}, 1000 * 60 * 5); // a cada 5 minutos
+}, 1000 * 60 * 5);
 
-// Impede a aplicação de finalizar
 process.stdin.resume();
