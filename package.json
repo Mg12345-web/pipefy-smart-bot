@@ -1,7 +1,7 @@
 {
   "name": "pipefy-smart-bot",
   "version": "1.0.0",
-  "description": "Robô inteligente para cadastrar clientes no Pipefy usando OCR e ChatGPT",
+  "description": "Base mínima do bot Pipefy",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -10,12 +10,6 @@
     "node": ">=18"
   },
   "dependencies": {
-    "dotenv": "^16.1.0",
-    "express": "^4.18.2",
-    "multer": "^1.4.5-lts.1",
-    "tesseract.js": "^2.1.5",
-    "openai": "^4.3.0",
-    "playwright": "^1.36.0",
-    "pdf-parse": "^1.1.1"
+    "express": "^4.18.2"
   }
 }
