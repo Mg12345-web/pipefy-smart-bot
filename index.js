@@ -60,12 +60,12 @@ app.post("/clientes", upload.fields([
   }
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`🚀 Rodando na porta ${port}`);
 });
 
-// Keep-alive
+// 🚨 Adicione isto para manter o container ativo:
 setInterval(() => {
   console.log("⏳ Keep-alive executado");
-}, 1000 * 60 * 5);
+}, 1000 * 60 * 5); // a cada 5 minutos
