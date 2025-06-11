@@ -61,3 +61,7 @@ app.post("/clientes", upload.fields([
 app.listen(port, () => {
   console.log(`🚀 Rodando na porta ${port}`);
 });
+// 🛡️ Mantém o servidor ativo no Railway (evita desligamento automático)
+setInterval(() => {
+  console.log("⏳ Keep-alive executado para manter o servidor online");
+}, 1000 * 60 * 5); // a cada 5 minutos
