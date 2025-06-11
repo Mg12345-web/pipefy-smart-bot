@@ -1,11 +1,12 @@
 const fs = require("fs");
 const { createWorker } = require("tesseract.js");
 const pdfParse = require("pdf-parse");
+const { fromPath } = require("pdf2pic");
 
 async function extrairTextoDoPDF(caminho) {
   const buffer = fs.readFileSync(caminho);
 
-  // 1. Tentativa com pdf-parse (texto digital)
+  // Tenta extrair texto direto
   try {
     const { text } = await pdfParse(buffer);
     if (text && text.trim().length > 50) {
@@ -16,13 +17,24 @@ async function extrairTextoDoPDF(caminho) {
     console.warn("⚠️ Erro no pdf-parse:", e.message);
   }
 
-  // 2. Tentativa com Tesseract (imagem escaneada)
-  console.log("⚠️ Usando OCR com Tesseract para imagem escaneada...");
+  // Converter 1ª página do PDF em imagem para OCR
+  console.log("⚠️ Usando OCR com pdf2pic + Tesseract...");
 
+  const convert = fromPath(caminho, {
+    density: 150,
+    saveFilename: "temp_ocr",
+    savePath: "./temp",
+    format: "png",
+    width: 1200,
+    height: 1600
+  });
+
+  const page = await convert(1); // primeira página
   const worker = await createWorker("por");
+
   const {
     data: { text: textoOCR }
-  } = await worker.recognize(caminho);
+  } = await worker.recognize(page.path);
 
   await worker.terminate();
   return textoOCR.trim();
