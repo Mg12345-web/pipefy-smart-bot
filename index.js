@@ -1,9 +1,13 @@
+require("dotenv").config();
+const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { extrairTextoDoPDF } = require("./services/ocr");
 
-// Configuração do multer para salvar arquivos na pasta uploads/
+const app = express();
+
+// Configuração do multer para salvar arquivos
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
@@ -13,11 +17,16 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Garante que a pasta uploads existe
 if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");
 }
 
+// Teste rápido
+app.get("/", (req, res) => {
+  res.send("✅ Pipefy Smart Bot Online");
+});
+
+// Rota /clientes com upload + OCR
 app.post("/clientes", upload.fields([
   { name: "cnh", maxCount: 1 },
   { name: "procuracao", maxCount: 1 },
@@ -50,3 +59,13 @@ app.post("/clientes", upload.fields([
     res.status(500).send("Erro ao processar o arquivo.");
   }
 });
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`🚀 Rodando na porta ${port}`);
+});
+
+// Keep-alive
+setInterval(() => {
+  console.log("⏳ Keep-alive executado");
+}, 1000 * 60 * 5);
